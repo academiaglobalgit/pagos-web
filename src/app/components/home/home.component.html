@@ -1,3 +1,118 @@
 <div>
-    <h1>Hola</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 divprocesspay">
+                <h1>Procesar pago</h1>
+            </div>
+            <div class="col-sm-8">
+                <div class="card-component">
+                    <h6>Tipo de pago</h6>
+
+                    <div id="accordion">
+                        <div class="card">
+                          <div class="card-header" id="headingOne">
+                            <h5 class="mb-0">
+                              <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                <label class="textcardlogo">Pago con tarjeta </label>
+                                <img class="imgcardlogo" src='../../../assets/images/mastercad.png' alt='cardlogo'>
+                                <img class="imgcardlogo" src='../../../assets/images/visa.png' alt='cardlogo'>
+                                <img class="imgcardlogo" src='../../../assets/images/americanexpress.png' alt='cardlogo'>
+                              </button>
+                            </h5>
+                          </div>
+                      
+                          <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                            <div class="card-body">
+                                <app-cardform></app-cardform>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="card">
+                          <div class="card-header" id="headingTwo">
+                            <h5 class="mb-0">
+                              <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                <label class="textcardlogo">Pago en establecimientos </label>
+                                <img class="imgcardlogo" src='../../../assets/images/cash/7eleven.png' alt='cardlogo'>
+                                <img class="imgcardlogo" src='../../../assets/images/cash/asturiano.png' alt='cardlogo'>
+                                <img class="imgcardlogo" src='../../../assets/images/cash/atiendas.png' alt='cardlogo'>
+
+
+                                <img class="imgcardlogo" src='../../../assets/images/cash/bodega.png' alt='cardlogo'>
+                                <img class="imgcardlogo" src='../../../assets/images/cash/cliclek.png' alt='cardlogo'>
+                                <img class="imgcardlogo" src='../../../assets/images/cash/extra.png' alt='cardlogo'>
+
+                                <img class="imgcardlogo" src='../../../assets/images/cash/famahorro.png' alt='cardlogo'>
+                                <img class="imgcardlogo" src='../../../assets/images/cash/farmguada.png' alt='cardlogo'>
+                                <img class="imgcardlogo" src='../../../assets/images/cash/gespago.png' alt='cardlogo'>
+
+                                <!--<img class="imgcardlogo" src='../../../assets/images/cash/k.png' alt='cardlogo'>
+                                <img class="imgcardlogo" src='../../../assets/images/cash/kiosko.png' alt='cardlogo'>
+                                <img class="imgcardlogo" src='../../../assets/images/cash/mirecargas.png' alt='cardlogo'>
+
+                                <img class="imgcardlogo" src='../../../assets/images/cash/pagorapido.png' alt='cardlogo'>
+                                <img class="imgcardlogo" src='../../../assets/images/cash/sams.png' alt='cardlogo'>
+                                <img class="imgcardlogo" src='../../../assets/images/cash/waldos.png' alt='cardlogo'>
+
+                                <img class="imgcardlogo" src='../../../assets/images/cash/Walmart.png' alt='cardlogo'>
+                                <img class="imgcardlogo" src='../../../assets/images/cash/walmatw.png' alt='cardlogo'>-->
+                                
+                              </button>
+                            </h5>
+                          </div>
+                          <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                            <div class="card-body">
+                              
+                            </div>
+                          </div>
+                        </div>
+                        <div class="card">
+                          <div class="card-header" id="headingThree">
+                            <h5 class="mb-0">
+                              <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                <label class="textcardlogo">Pago por transferencia </label>
+                                <img class="imgcardlogo" src='../../../assets/images/spei.png' alt='cardlogo'>
+                              </button>
+                            </h5>
+                          </div>
+                          <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+                            <div class="card-body">
+                              
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="card-component deatailsbuy">
+                    <h6>Detalles de compra</h6>
+                    <div class="row linedetails">
+                        <div class="col-sm-7 descriptionbuy">
+                            <label>{{nameProduct}}</label>
+                        </div>
+                        <div class="col-sm-5 pricebuy">
+                            <label>$ {{priceProduct}} MXN</label>
+                        </div>
+                    </div>
+                    <div class="row linedetails">
+                        <div class="col-sm-7 descriptionbuy">
+                            <label>Cargo por servicio</label>
+                        </div>
+                        <div class="col-sm-5 pricebuy">
+                            <label>$ {{chargeService.toFixed(2)}} MXN</label>
+                        </div>
+                    </div>
+                    <div class="row linedetails">
+                        <div class="col-sm-7 descriptionbuy">
+                            <label><strong>Total</strong></label>
+                        </div>
+                        <div class="col-sm-5 pricebuy">
+                            <label>$ {{(chargeService + priceProduct).toFixed(2)}} MXN</label>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
 </div>

@@ -1,0 +1,44 @@
+@import "../../../styles.scss";
+
+.divprocesspay{
+    text-align: center;
+    padding: 20px;
+
+    h1{
+        font-size: 34px;
+    }
+}
+
+.textcardlogo{
+    display: inline-block;
+    margin-right: 15px;
+    color: #3c3c3c;
+    font-weight: 600;
+}
+
+.imgcardlogo{
+    width: 50px;
+    display: inline-block;
+    margin-right: 15px;
+}
+
+.deatailsbuy{
+    .linedetails{
+        border-bottom: 1px solid #eee;
+        padding-bottom: 5px;
+        padding-top: 7px;
+
+        label{
+            font-size: 12px;
+            color: gray;
+        }
+    
+        .pricebuy{
+            label{
+                font-weight: 600;
+            }
+        }
+    }
+    
+    
+}

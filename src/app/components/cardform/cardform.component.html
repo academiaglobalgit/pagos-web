@@ -1,0 +1,35 @@
+<div>
+  <div>
+    <div class="form-group">
+      <label for="cardnumber">Numero de tarjeta</label>
+      <input class="form-control" id="cardnumber" type="tel" inputmode="numeric" pattern="[0-9\s]{13,19}"
+        autocomplete="cc-number" maxlength="19" placeholder="xxxx xxxx xxxx xxxx">
+    </div>
+    <div class="form-group">
+      <label for="nameuser">Nombre completo (como aparece en la tarjeta)</label>
+      <input type="text" class="form-control" id="nameuser" placeholder="Adriana Maldonado Salazar">
+    </div>
+    <div class="row">
+      <div class="col-sm-4">
+        <div class="form-group">
+          <label for="monthexpired">Mes de expiración</label>
+          <input type="tel" class="form-control" id="monthexpired" maxlength="2" placeholder="05">
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="form-group">
+          <label for="yearexpired">Año de expiración</label>
+          <input type="tel" class="form-control" id="yearexpired" maxlength="2" placeholder="27">
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="form-group">
+          <label for="yearexpired">CCV</label>
+          <input class="form-control" type="password" pattern="\d*" maxlength="3" placeholder="CVC">
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary">Procesar pago</button>
+  </div>
+</div>
