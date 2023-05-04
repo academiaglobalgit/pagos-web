@@ -21,6 +21,7 @@ export class HomeComponent implements OnInit {
   username: string = '';
   lastName: string = '';
   email: string = '';
+  dataInfo =  {}
   
 
   ngOnInit(): void {
@@ -47,6 +48,11 @@ export class HomeComponent implements OnInit {
       this.chargeService = (this.priceProduct * 2.9 / 100) + 2.5;
 
       this.total = this.chargeService + this.priceProduct
+
+      this.dataInfo = {
+        total: this.total,
+        nameProduct: this.nameProduct
+      }
     }
   }
 

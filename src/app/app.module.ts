@@ -13,13 +13,15 @@ import { AppComponent } from './app.component'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HomeComponent } from './components/home/home.component';
 import { CardComponent } from './components/cardform/cardform.component'
+import { CashComponent } from './components/cashform/cashform.component'
 import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    CardComponent
+    CardComponent,
+    CashComponent
   ],
   imports: [
     BrowserModule,
