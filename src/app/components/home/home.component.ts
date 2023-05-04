@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import {Router, ActivatedRoute, Params} from '@angular/router';
 //import { Openpay } from 'openpay';
 //var openpay = new Openpay('mbipwocgkvgkndoykdgg', 'sk_252732b74920457099f62651857894ef', 'mx', false);
@@ -16,6 +16,7 @@ export class HomeComponent implements OnInit {
   nameProduct: string = ''
   priceProduct: number = 0;
   chargeService: number = 0;
+  @Input() total: number = 0;
   userId: string = '';
   username: string = '';
   lastName: string = '';
@@ -36,12 +37,16 @@ export class HomeComponent implements OnInit {
 
   public getProductInfo (idproduct: string) {
     if (idproduct) {
-      //this.RestService.getuser(baseapi + 'user/' + userid).subscribe(resp => {
-      //})
-      this.nameProduct = 'Test producto';
-      this.priceProduct = 820.59;
+      /*
+      this.RestService.getuser(baseapi + 'products/' + 008).subscribe(resp => {
+        
+      })*/
+      this.nameProduct = 'Credencial';
+      this.priceProduct = 420.59;
 
-      this.chargeService = (820.59 * 2.9 / 100) + 2.5;
+      this.chargeService = (this.priceProduct * 2.9 / 100) + 2.5;
+
+      this.total = this.chargeService + this.priceProduct
     }
   }
 
