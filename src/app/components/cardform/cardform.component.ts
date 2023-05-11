@@ -86,7 +86,8 @@ export class CardComponent implements OnInit {
       }
 
       this.RestService.generalPost(`${apiopenpay}/charge/card`, objPayment).subscribe(resp => {
-        console.log('resp', resp); 
+        
+        //console.log('resp', resp); 
       })
     }
   }
