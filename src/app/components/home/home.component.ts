@@ -20,9 +20,10 @@ export class HomeComponent implements OnInit {
   chargeService: number = 0
   @Input() total: number = 0
   userId: string = ''
-  username: string = ''
-  lastName: string = ''
-  email: string = ''
+  username: string = 'Andrea'
+  lastName: string = 'Jimenez'
+  email: string = 'andrea2@gmail.com'
+  idopenpay: string = 'ah9wuhgeewppulrcu3zr'
   id_plan_estudio: number = 1;
   dataInfo = {}
   //dataProduct: any;
@@ -67,7 +68,11 @@ export class HomeComponent implements OnInit {
         total: this.total,
         nameProduct: this.nameProduct,
         userId: this.userId,
-        idProduct: this.idProduct
+        idProduct: this.idProduct,
+        username: this.username,
+        lastName: this.lastName,
+        email: this.email,
+        idopenpay: this.idopenpay
       }
     }
   }
