@@ -23,6 +23,7 @@ export class HomeComponent implements OnInit {
   username: string = ''
   lastName: string = ''
   email: string = ''
+  id_plan_estudio: number = 1;
   dataInfo = {}
   //dataProduct: any;
 
@@ -39,9 +40,11 @@ export class HomeComponent implements OnInit {
   public getProductInfo (idproduct: string) {
     if (idproduct) {
       try {
-        this.RestService.getuser(
+        this.RestService.generalGet(
           `${apigproducts}/pasarela/get_servicios`
         ).subscribe(resp => {
+          console.log('get', resp);
+          /*
           if(resp?.data?.length){
             const dataProduct = resp.data;
             for (let index = 0; index < dataProduct.length; index++) {
@@ -52,28 +55,32 @@ export class HomeComponent implements OnInit {
                 this.priceProduct = element.precio
               }
             }
-          }
+          }*/
         })
       } catch (error) {}
-      
+
       this.chargeService = (this.priceProduct * 2.9) / 100 + 2.5
 
       this.total = this.chargeService + this.priceProduct
 
       this.dataInfo = {
         total: this.total,
-        nameProduct: this.nameProduct
+        nameProduct: this.nameProduct,
+        userId: this.userId,
+        idProduct: this.idProduct
       }
     }
   }
 
   public getUserInfo (userid: string) {
     if (userid) {
-      //this.RestService.getuser(baseapi + 'user/' + userid).subscribe(resp => {
+      //this.username
+      //this.lastName
+      //this.email
+      //this.id_plan_estudio
+
+      //this.RestService.generalGet(apigproducts + 'user/' + userid).subscribe(resp => {
       //})
-      //this.nameProduct = 'Test producto';
-      //this.priceProduct = 820.59;
-      //calcular servicio
     }
   }
 }

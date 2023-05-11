@@ -1,16 +1,16 @@
 import { Component, OnInit, Input } from '@angular/core'
 import { Router, ActivatedRoute, Params } from '@angular/router'
 import { RestService } from 'src/app/services/rest.service'
-import { apiopenpay } from 'src/app/services/config'
+import { apiopenpay, apigproducts } from 'src/app/services/config'
 declare var OpenPay: any
 //const openpay = new OpenPay('mbipwocgkvgkndoykdgg','pk_17b9d41b42464ddb8b707aa6141dd530', [ false ]);
 OpenPay.setId('mbipwocgkvgkndoykdgg')
 OpenPay.setApiKey('pk_17b9d41b42464ddb8b707aa6141dd530')
 OpenPay.setSandboxMode(true)
-/*const deviceSessionId = OpenPay.deviceData.setup(
+const deviceSessionId = OpenPay.deviceData.setup(
   'payment-form',
   'deviceIdHiddenFieldName'
-)*/
+)
 
 @Component({
   selector: 'app-cardform',
@@ -76,7 +76,7 @@ export class CardComponent implements OnInit {
         amount: this.generalInfo?.total.toFixed(2),
         currency: 'MXN',
         description: this.generalInfo.nameProduct,
-        device_session_id: 'deviceSessionId',
+        device_session_id: deviceSessionId,
         customer: {
           name: 'Juan',
           last_name: 'Vazquez Juarez',
@@ -85,10 +85,32 @@ export class CardComponent implements OnInit {
         }
       }
 
-      this.RestService.generalPost(`${apiopenpay}/charge/card`, objPayment).subscribe(resp => {
-        
-        //console.log('resp', resp); 
-      })
+      try {
+        this.RestService.generalPost(`${apiopenpay}/charge/card`, objPayment).subscribe(resp => {
+          if(resp){
+            const objToSave = {
+              id_moodle_alumno: this.generalInfo?.userId,
+              id_plan_estudio: 1,
+              monto: this.generalInfo?.total.toFixed(2),
+              id_servicio: this.generalInfo?.idProduct
+              //status
+              //order_id
+              //authorization
+              //id
+              //cardinfo
+            }
+            this.RestService.generalPost(`${apigproducts}/pasarela/registrar_pago`, objToSave).subscribe(responseRegister => {
+              console.log('save_product_bought', responseRegister);
+            });
+
+          }else{
+            console.log('error_pago');
+          }
+        })
+      } catch (error) {
+        console.log('error_pago'); 
+      }
+      
     }
   }
 
