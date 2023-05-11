@@ -1,5 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core'
 import { Router, ActivatedRoute, Params } from '@angular/router'
+import { RestService } from 'src/app/services/rest.service'
+import { apiopenpay } from 'src/app/services/config'
 declare var OpenPay: any
 //const openpay = new OpenPay('mbipwocgkvgkndoykdgg','pk_17b9d41b42464ddb8b707aa6141dd530', [ false ]);
 OpenPay.setId('mbipwocgkvgkndoykdgg')
@@ -28,9 +30,14 @@ export class CardComponent implements OnInit {
   objPayment: any
   hideModal: string = 'true'
 
-  constructor (private route: ActivatedRoute) {}
+  constructor (
+    private route: ActivatedRoute,
+    private RestService: RestService,
+  ) {}
 
-  ngOnInit (): void {}
+  ngOnInit (): void {
+    
+  }
 
   onTypeNumber (event: any) {
     this.card_number = event.target.value
@@ -58,18 +65,17 @@ export class CardComponent implements OnInit {
     console.log('response_error_payment', response)
   }
 
-  SuccessCallbackRegister (response: any) {
-    alert('Enviado exitosamente')
-    //console.log('response_success', response)
-
-    /*
+  SuccessCallbackRegister (response: any) { 
+    //alert('Enviado exitosamente')
+    console.log('response_success', response);
+    
     if (response?.data && response?.data?.id) {
       const objPayment = {
         source_id: response?.data?.id,
         method: 'card',
-        amount: 900,
+        amount: this.generalInfo?.total.toFixed(2),
         currency: 'MXN',
-        description: 'test pago',
+        description: this.generalInfo.nameProduct,
         device_session_id: 'deviceSessionId',
         customer: {
           name: 'Juan',
@@ -77,21 +83,12 @@ export class CardComponent implements OnInit {
           phone_number: '4423456723',
           email: 'juan.vazquez@empresa.com.mx'
         }
-      }; debugger;
-      openpayInstance.charges.create(
-        objPayment,
-        () => {
-          console.log('si jalo')
-        },
-        () => {
-          console.log('error en pago')
-        }
-      )
-    }*/
-    ///enviar
-    /*amount: this.generalInfo?.total.toFixed(2),
-        description: this.generalInfo.nameProduct,
-        order_id: 'oid-00721'*/
+      }
+
+      this.RestService.generalPost(`${apiopenpay}/charge/card`, objPayment).subscribe(resp => {
+        console.log('resp', resp); 
+      })
+    }
   }
 
   ErrorCallbackRegister (response: any) {
@@ -112,9 +109,10 @@ export class CardComponent implements OnInit {
 
     OpenPay.token.create(
       this.objCard,
-      this.SuccessCallbackRegister,
+      (successResponse: any) => {
+        this.SuccessCallbackRegister(successResponse);
+      },
       this.ErrorCallbackRegister
     )
-    //OpenPay.token.create(this.objPayment, this.SuccessCallback, this.ErrorCallback);
   }
 }
