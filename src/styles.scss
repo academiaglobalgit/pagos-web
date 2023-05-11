@@ -8,3 +8,11 @@
 h6{
     font-size: 22px;
 }
+.label-error{
+    color: #b12f4e;
+    font-weight: 500;
+}
+
+input::placeholder {
+    color: #ced4da;
+}
