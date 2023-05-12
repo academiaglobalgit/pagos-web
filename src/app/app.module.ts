@@ -14,6 +14,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HomeComponent } from './components/home/home.component';
 import { CardComponent } from './components/cardform/cardform.component'
 import { CashComponent } from './components/cashform/cashform.component'
+import { TransferformComponent } from './components/transferform/transferform.component'
 import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
@@ -21,7 +22,8 @@ import { HttpClientModule } from '@angular/common/http';
     AppComponent,
     HomeComponent,
     CardComponent,
-    CashComponent
+    CashComponent,
+    TransferformComponent
   ],
   imports: [
     BrowserModule,

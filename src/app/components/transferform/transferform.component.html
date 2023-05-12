@@ -1,0 +1,40 @@
+<div>
+  <nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+      <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab"
+        aria-controls="nav-home" aria-selected="true">Información</a>
+      <a class="nav-item nav-link" id="nav-voucher-tab" data-toggle="tab" href="#nav-voucher" role="tab"
+        aria-controls="nav-voucher" aria-selected="false">Subir comprobante</a>
+    </div>
+  </nav>
+  <div class="tab-content" id="nav-tabContent">
+    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+      <div>
+        <div class="card-component">
+          <div>
+            <label>Banco: </label> <strong> Santander</strong>
+          </div>
+          <div>
+            <label>Cuenta clabe: </label> <strong> 20192837163819281</strong>
+          </div>
+          <div>
+            <label>Número de cuenta: </label> <strong> 182718391</strong>
+          </div>
+          <div>
+            <label>Tarjeta asociada: </label> <strong> 1020 1020 1029 1201</strong>
+          </div>
+          <div>
+            <label>Nombre cliente: </label> <strong> Lic Guzman Hernandez Jimenez</strong>
+          </div>
+          <div>
+            <label>Concepto: </label> <strong> {{generalInfo?.nameProduct}} por {{generalInfo?.username}} {{generalInfo?.lastName}}</strong>
+          </div>
+          <div>
+            <label>Monto: </label> <strong> ${{generalInfo?.total.toFixed(2)}} MXN</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane fade" id="nav-voucher" role="tabpanel" aria-labelledby="nav-voucher-tab">2...</div>
+  </div>
+</div>
