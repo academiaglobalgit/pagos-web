@@ -1,10 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core'
-import { Router, ActivatedRoute, Params } from '@angular/router'
+import { ActivatedRoute } from '@angular/router'
 import Swal from 'sweetalert2'
 import { RestService } from 'src/app/services/rest.service'
 import { apiopenpay, apigproducts } from 'src/app/services/config'
 declare var OpenPay: any
-//const openpay = new OpenPay('mbipwocgkvgkndoykdgg','pk_17b9d41b42464ddb8b707aa6141dd530', [ false ]);
 OpenPay.setId('mbipwocgkvgkndoykdgg')
 OpenPay.setApiKey('pk_17b9d41b42464ddb8b707aa6141dd530')
 OpenPay.setSandboxMode(true)
@@ -59,6 +58,17 @@ export class CardComponent implements OnInit {
     this.chickedSend = false
   }
 
+  getErrorGeneral () {
+    setTimeout(() => {
+      Swal.fire({
+        icon: 'error',
+        title: '¡Error!',
+        text: 'No se pudo completar la petición, intenta nuevamente',
+        footer: ''
+      })
+    }, 600)
+  }
+
   SuccessCallbackRegister (response: any) {
     if (response?.data && response?.data?.id) {
       const objPayment = {
@@ -69,10 +79,10 @@ export class CardComponent implements OnInit {
         description: this.generalInfo.nameProduct,
         device_session_id: deviceSessionId,
         customer: {
-          name: 'Juan',
-          last_name: 'Vazquez Juarez',
-          phone_number: '4423456723',
-          email: 'juan.vazquez@empresa.com.mx'
+          name: this.generalInfo.username,
+          last_name: this.generalInfo.lastName,
+          phone_number: '1111111111',
+          email: this.generalInfo.email
         }
       }
 
@@ -80,60 +90,66 @@ export class CardComponent implements OnInit {
         this.RestService.generalPost(
           `${apiopenpay}/charge/card`,
           objPayment
-        ).subscribe(resp => {
-          if (resp) {
-            const order_id = resp?.data?.id //resp?.data?.order_id
-            if (resp?.data && order_id) {
-              let titleMsg = '',
-                descriptionMsg = ''
-              switch (resp.data?.status) {
-                case 'completed':
-                  titleMsg = 'Pago exitoso'
-                  descriptionMsg = `En seguida recibiras un correo con tu pago, tu número de referencia es: ${order_id}`
-                  break
-                case 'in_progress':
-                  titleMsg = 'Tu pago esta en proceso'
-                  descriptionMsg = `Aún no hemos pasado tu pago, favor de revisar tu bandeja de correo para ver cambio de estatus o comunicate con nuestros atención a clientes, tu número de referencia es: ${order_id}`
-                  break
-                case 'failed':
-                  titleMsg = 'Fallo en pago'
-                  descriptionMsg = `Tu pago no ha sido procesado favor de volverlo a intentar, tu número de referencia es: ${order_id}`
-                  break
-                default:
-                  break
+        ).subscribe(
+          resp => {
+            if (resp) {
+              const order_id = resp?.data?.id //resp?.data?.order_id
+              if (resp?.data && order_id) {
+                let titleMsg = '',
+                  descriptionMsg = ''
+                switch (resp.data?.status) {
+                  case 'completed':
+                    titleMsg = 'Pago exitoso'
+                    descriptionMsg = `<label>En seguida recibiras un correo con tu pago, tu número de referencia es: <strong>${order_id}</strong></label>`
+                    break
+                  case 'in_progress':
+                    titleMsg = 'Tu pago esta en proceso'
+                    descriptionMsg = `<label>Aún no hemos pasado tu pago, favor de revisar tu bandeja de correo para ver cambio de estatus o comunicate con nuestros atención a clientes, tu número de referencia es: <strong>${order_id}</strong></label>`
+                    break
+                  case 'failed':
+                    titleMsg = 'Fallo en pago'
+                    descriptionMsg = `<label>Tu pago no ha sido procesado favor de volverlo a intentar, tu número de referencia es: <strong>${order_id}</strong></label>`
+                    break
+                  default:
+                    break
+                }
+                Swal.fire({
+                  icon: 'success',
+                  title: titleMsg,
+                  html: descriptionMsg,
+                  showCancelButton: false,
+                  showConfirmButton: true
+                })
               }
-              Swal.fire({
-                icon: 'success',
-                title: titleMsg,
-                text: descriptionMsg,
-                showCancelButton: false,
-                showConfirmButton: true
+              const objToSave = {
+                id_moodle_alumno: parseInt(this.generalInfo?.userId),
+                id_plan_estudio: parseInt(this.generalInfo.id_plan_estudio),
+                monto: parseFloat(resp?.data?.amount),
+                id_servicio: parseInt(this.generalInfo?.idProduct),
+                status: resp?.data?.status,
+                order_id: order_id,
+                authorization: resp?.data?.authorization,
+                id: resp?.data?.id,
+                cardinfo: resp?.data?.card,
+                type_payment: 'card'
+              }
+              this.RestService.generalPost(
+                `${apigproducts}/pasarela/registrar_pago`,
+                objToSave
+              ).subscribe(responseRegister => {
+                console.log('save_product_bought', responseRegister)
               })
+            } else {
+              this.getErrorGeneral()
             }
-            const objToSave = {
-              id_moodle_alumno: parseInt(this.generalInfo?.userId),
-              id_plan_estudio: parseInt(this.generalInfo.id_plan_estudio),
-              monto: parseFloat(this.generalInfo?.total.toFixed(2)),
-              id_servicio: parseInt(this.generalInfo?.idProduct)
-              //status
-              //order_id
-              //authorization
-              //id
-              //cardinfo
-              //type_payment (card, cash)
-            }
-            this.RestService.generalPost(
-              `${apigproducts}/pasarela/registrar_pago`,
-              objToSave
-            ).subscribe(responseRegister => {
-              console.log('save_product_bought', responseRegister)
-            })
-          } else {
-            console.log('error_pago')
-          }
-        })
+          },
+          err => {
+            this.getErrorGeneral()
+          },
+          () => console.log('HTTP request completed.')
+        )
       } catch (error) {
-        console.log('error_pago')
+        this.getErrorGeneral()
       }
     }
   }
