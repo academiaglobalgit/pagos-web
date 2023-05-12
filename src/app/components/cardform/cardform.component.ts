@@ -124,13 +124,13 @@ export class CardComponent implements OnInit {
               const objToSave = {
                 id_moodle_alumno: parseInt(this.generalInfo?.userId),
                 id_plan_estudio: parseInt(this.generalInfo.id_plan_estudio),
-                monto: parseFloat(resp?.data?.amount),
+                monto: parseFloat(resp?.amount),
                 id_servicio: parseInt(this.generalInfo?.idProduct),
-                status: resp?.data?.status,
+                status: resp?.status,
                 order_id: order_id,
-                authorization: resp?.data?.authorization,
-                id: resp?.data?.id,
-                cardinfo: resp?.data?.card,
+                authorization: resp?.authorization,
+                id: resp?.id,
+                cardinfo: resp?.card,
                 type_payment: 'card'
               }
               this.RestService.generalPost(
