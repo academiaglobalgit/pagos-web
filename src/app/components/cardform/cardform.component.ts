@@ -84,22 +84,23 @@ export class CardComponent implements OnInit {
           if (resp) {
             const order_id = resp?.data?.id //resp?.data?.order_id
             if (resp?.data && order_id) {
-              let titleMsg = '', descriptionMsg = '';
+              let titleMsg = '',
+                descriptionMsg = ''
               switch (resp.data?.status) {
                 case 'completed':
                   titleMsg = 'Pago exitoso'
-                  descriptionMsg =  `En seguida recibiras un correo con tu pago, tu número de referencia es: ${order_id}`;
-                  break;
+                  descriptionMsg = `En seguida recibiras un correo con tu pago, tu número de referencia es: ${order_id}`
+                  break
                 case 'in_progress':
                   titleMsg = 'Tu pago esta en proceso'
-                  descriptionMsg =  `Aún no hemos pasado tu pago, favor de revisar tu bandeja de correo para ver cambio de estatus o comunicate con nuestros atención a clientes, tu número de referencia es: ${order_id}`;
-                    break;
+                  descriptionMsg = `Aún no hemos pasado tu pago, favor de revisar tu bandeja de correo para ver cambio de estatus o comunicate con nuestros atención a clientes, tu número de referencia es: ${order_id}`
+                  break
                 case 'failed':
                   titleMsg = 'Fallo en pago'
-                  descriptionMsg =  `Tu pago no ha sido procesado favor de volverlo a intentar, tu número de referencia es: ${order_id}`;
-                      break;
+                  descriptionMsg = `Tu pago no ha sido procesado favor de volverlo a intentar, tu número de referencia es: ${order_id}`
+                  break
                 default:
-                  break;
+                  break
               }
               Swal.fire({
                 icon: 'success',
@@ -110,15 +111,16 @@ export class CardComponent implements OnInit {
               })
             }
             const objToSave = {
-              id_moodle_alumno: this.generalInfo?.userId,
-              id_plan_estudio: 1,
-              monto: this.generalInfo?.total.toFixed(2),
-              id_servicio: this.generalInfo?.idProduct
+              id_moodle_alumno: parseInt(this.generalInfo?.userId),
+              id_plan_estudio: parseInt(this.generalInfo.id_plan_estudio),
+              monto: parseFloat(this.generalInfo?.total.toFixed(2)),
+              id_servicio: parseInt(this.generalInfo?.idProduct)
               //status
               //order_id
               //authorization
               //id
               //cardinfo
+              //type_payment (card, cash)
             }
             this.RestService.generalPost(
               `${apigproducts}/pasarela/registrar_pago`,
@@ -138,8 +140,13 @@ export class CardComponent implements OnInit {
 
   ErrorCallbackRegister (response: any) {
     console.log('error_code', response?.data?.error_code)
-    let text = 'Tuvimos un problema al procesar tu pago, favor de intentarlo nuevamente';
-    if(response?.data?.error_code === 2004 || response?.data?.error_code === 2005 || response?.data?.error_code === 2006){
+    let text =
+      'Tuvimos un problema al procesar tu pago, favor de intentarlo nuevamente'
+    if (
+      response?.data?.error_code === 2004 ||
+      response?.data?.error_code === 2005 ||
+      response?.data?.error_code === 2006
+    ) {
       text = 'Favor de revisar tus datos nuevamente'
     }
     setTimeout(() => {

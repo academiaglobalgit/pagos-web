@@ -12,7 +12,7 @@ export class RestService {
   }
 
   public generalGet (url: string) {
-    return this.http.get(url)
+    return this.http.get<any>(url)
   }
   
 }

@@ -33,7 +33,7 @@ export class CashComponent implements OnInit {
 
   createcustomer () {
     const customerRequest = {
-      name: this.generalInfo.username + this.generalInfo.lastName,
+      name: this.generalInfo.username + ' ' + this.generalInfo.lastName,
       email: this.generalInfo.email,
       requires_account: false
     }
