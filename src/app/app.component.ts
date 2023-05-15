@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+declare var OpenPay: any
 
 @Component({
   selector: 'app-root',
@@ -6,5 +7,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'Checkout';
+  title = 'library-angular';
 }
