@@ -93,11 +93,11 @@ export class CardComponent implements OnInit {
         ).subscribe(
           resp => {
             if (resp) {
-              const order_id = resp?.data?.id //resp?.data?.order_id
-              if (resp?.data && order_id) {
+              const order_id = resp?.id //resp?.data?.order_id
+              if (order_id) {
                 let titleMsg = '',
                   descriptionMsg = ''
-                switch (resp.data?.status) {
+                switch (resp?.status) {
                   case 'completed':
                     titleMsg = 'Pago exitoso'
                     descriptionMsg = `<label>En seguida recibiras un correo con tu pago, tu número de referencia es: <strong>${order_id}</strong></label>`
