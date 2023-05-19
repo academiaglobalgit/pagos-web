@@ -44,16 +44,16 @@ export class HomeComponent implements OnInit {
     if (idproduct) {
       try {
         this.RestService.generalGet(
-          `${apigproducts}/pasarela/get_servicios`
+          `${apigproducts}/pasarela/get_servicios?pe=${this.id_plan_estudio}`
         ).subscribe(resp => {
           if (resp?.data?.length) {
             const dataProduct = resp.data
             for (let index = 0; index < dataProduct.length; index++) {
               const element = dataProduct[index]
 
-              if (element.id === parseInt(idproduct)) {
+              if (element.id_tipo_servicio === parseInt(idproduct)) {
                 this.nameProduct = element.nombre
-                const priceProduct = element.precio ? element.precio : 1.0
+                const priceProduct = element.monto ? element.monto : 1.0
 
                 const chargeService = (priceProduct * 2.9) / 100 + 2.5
                 this.chargeService = chargeService;
