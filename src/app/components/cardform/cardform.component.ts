@@ -125,7 +125,7 @@ export class CardComponent implements OnInit {
                 id_moodle_alumno: parseInt(this.generalInfo?.userId),
                 id_plan_estudio: parseInt(this.generalInfo.id_plan_estudio),
                 monto: parseFloat(resp?.amount),
-                id_servicio: parseInt(this.generalInfo?.idProduct),
+                id_servicio: parseInt(this.generalInfo?.id_servicio),
                 status: resp?.status,
                 order_id: order_id,
                 authorization: resp?.authorization,

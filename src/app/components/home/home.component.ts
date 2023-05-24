@@ -25,6 +25,7 @@ export class HomeComponent implements OnInit {
   email: string = 'andrea2@gmail.com'
   idopenpay: string = 'ah9wuhgeewppulrcu3zr'
   id_plan_estudio: number = 22
+  id_servicio: number = 259
   dataInfo = {}
   ItemsResponse: any
   //dataProduct: any;
@@ -70,7 +71,8 @@ export class HomeComponent implements OnInit {
                   lastName: this.lastName,
                   email: this.email,
                   idopenpay: this.idopenpay,
-                  id_plan_estudio: this.id_plan_estudio
+                  id_plan_estudio: this.id_plan_estudio,
+                  id_servicio: element.id_servicio
                 }
               }
             }
