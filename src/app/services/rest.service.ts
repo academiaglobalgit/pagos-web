@@ -14,5 +14,9 @@ export class RestService {
   public generalGet (url: string) {
     return this.http.get<any>(url)
   }
+
+  public generalPatch (url: string, info: object) {
+    return this.http.patch<any>(url, info);
+  }
   
 }

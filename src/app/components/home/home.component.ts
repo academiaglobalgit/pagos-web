@@ -15,17 +15,17 @@ export class HomeComponent implements OnInit {
   ) {}
 
   idProduct: string = ''
-  nameProduct: string = 'Credencial'
-  priceProduct: number = 820
+  nameProduct: string = ''
+  priceProduct: number = 0
   chargeService: number = 0
   //@Input() total: number = 0
   userId: number = 0
-  username: string = 'Andrea'
-  lastName: string = 'Jimenez'
-  email: string = 'andrea2@gmail.com'
-  idopenpay: string = 'ah9wuhgeewppulrcu3zr'
-  id_plan_estudio: number = 22
-  id_servicio: number = 259
+  username: string = ''
+  lastName: string = ''
+  email: string = ''
+  idopenpay: string = ''
+  id_plan_estudio: number = 0
+  id_servicio: number = 0
   dataInfo = {}
   ItemsResponse: any
   //dataProduct: any;
@@ -57,22 +57,19 @@ export class HomeComponent implements OnInit {
                 const priceProduct = element.monto ? element.monto : 1.0
 
                 const chargeService = (priceProduct * 2.9) / 100 + 2.5
-                this.chargeService = chargeService;
-                this.priceProduct = priceProduct;
+                this.chargeService = chargeService
+                this.priceProduct = priceProduct
                 const total = chargeService + priceProduct
                 //this.total = chargeService + priceProduct
 
                 this.dataInfo = {
-                  total: total,
-                  nameProduct: element.nombre,
-                  userId: this.userId,
-                  idProduct: this.idProduct,
-                  username: this.username,
-                  lastName: this.lastName,
-                  email: this.email,
-                  idopenpay: this.idopenpay,
-                  id_plan_estudio: this.id_plan_estudio,
-                  id_servicio: element.id_servicio
+                  ...this.dataInfo,
+                  ...{
+                    total: total,
+                    nameProduct: element.nombre,
+                    idProduct: this.idProduct,
+                    id_servicio: element.id_servicio
+                  }
                 }
               }
             }
@@ -84,14 +81,26 @@ export class HomeComponent implements OnInit {
 
   public getUserInfo (userid: number) {
     if (userid) {
-      //this.username
-      //this.lastName
-      //this.email
-      //this.tel
-      //this.idopenpay
-      //this.RestService.generalGet(apigproducts + 'user/' + userid).subscribe(resp => {
-      //})
+      this.RestService.generalGet(
+        apigproducts +
+          `/pasarela/get_informacion_usuario?pe=${this.id_plan_estudio}&ma=${this.userId}`
+      ).subscribe(resp => { 
+        if (resp?.data) {
+          let data = resp.data;
+          data = data[0];
+          this.dataInfo = {
+            ...this.dataInfo,
+            ...{
+              userId: this.userId,
+              username: data.nombre,
+              lastName: data.apellido_paterno,
+              email: data.email,
+              idopenpay: data.id_open_pay,
+              id_plan_estudio: this.id_plan_estudio,
+            }
+          }
+        }
+      })
     }
-
   }
 }
