@@ -16,6 +16,11 @@ export class TransferformComponent implements OnInit {
   @Input() item = ''
   @Input() generalInfo: any
 
+  objCard: any
+  objPayment: any
+  customerid: string = ''
+  urlpdf: string = ''
+
   constructor (
     private route: ActivatedRoute,
     private RestService: RestService
@@ -34,10 +39,97 @@ export class TransferformComponent implements OnInit {
     }, 600)
   }
 
+  createcustomer () {
+    const customerRequest = {
+      name: this.generalInfo.username + ' ' + this.generalInfo.lastName,
+      email: this.generalInfo.email,
+      requires_account: false
+    }
 
+    this.RestService.generalPost(
+      `${apiopenpay}/charge/create_customer`,
+      customerRequest
+    ).subscribe(
+      resp => {
+        if (resp && resp?.id) {
+          this.customerid = resp?.id
+          this.getstorepayment()
+        }
+      },
+      err => {
+        this.getErrorGeneral()
+      },
+      () => console.log('HTTP request completed.')
+    )
+  }
 
-  sendticket () {
+  sendpay () {
+    if (this.generalInfo?.idopenpay) {
+      this.customerid = this.generalInfo?.idopenpay
+      this.getstorepayment()
+    } else {
+      this.createcustomer()
+    }
+  }
+
+  getstorepayment () {
     Swal.showLoading()
+    //crear voucher
+    try {
+      const objstore = {
+        customerid: this.customerid,
+        data: {
+          method: 'bank_account',
+          amount: this.generalInfo?.total.toFixed(2),
+          description: this.generalInfo.nameProduct
+        }
+      }
+      this.RestService.generalPost(
+        `${apiopenpay}/charge/store`,
+        objstore
+      ).subscribe(
+        resp => {
+          if (resp?.payment_method?.name) {
+            //success
+            this.urlpdf = `${dashboardopenpay}/spei-pdf/mbipwocgkvgkndoykdgg/${resp?.id}`
+            const htmlContent = `<a class="btn btn-primary" href="${this.urlpdf}" target="_blank">Descargar pdf</a>`
+            Swal.fire({
+              icon: 'success',
+              title: 'Se ha generado con exito tu voucher',
+              html: htmlContent,
+              showCancelButton: true,
+              showConfirmButton: false
+            })
+
+            //enviar datos DB
+            const objToSave = {
+              id_moodle_alumno: parseInt(this.generalInfo?.userId),
+              id_plan_estudio: parseInt(this.generalInfo.id_plan_estudio),
+              monto: resp?.amount,
+              id_servicio: parseInt(this.generalInfo?.id_servicio),
+              status: resp?.status,
+              order_id: resp?.payment_method?.name,
+              authorization: resp?.authorization,
+              id: resp?.id,
+              cardinfo: null,
+              type_payment: 'spei'
+            }
+            this.RestService.generalPost(
+              `${apigproducts}/pasarela/registrar_pago`,
+              objToSave
+            ).subscribe(responseRegister => {
+              console.log('save_product_bought', responseRegister)
+            })
+          }
+        },
+        err => {
+          this.getErrorGeneral()
+        },
+        () => console.log('HTTP request completed.')
+      )
+    } catch (error) {
+      this.getErrorGeneral()
+    }
   }
 
   

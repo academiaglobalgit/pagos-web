@@ -38,6 +38,7 @@ export class CashComponent implements OnInit {
       })
     }, 600)
   }
+  
 
   createcustomer () {
     const customerRequest = {
@@ -53,6 +54,22 @@ export class CashComponent implements OnInit {
       resp => {
         if (resp && resp?.id) {
           this.customerid = resp?.id
+
+          //update idopenpay
+          const objToSave = {
+            id_moodle_alumno: parseInt(this.generalInfo?.userId),
+            id_plan_estudio: parseInt(this.generalInfo.id_plan_estudio),
+            id_open_pay: resp?.id,
+            email: this.generalInfo.email
+          }
+
+          this.RestService.generalPatch(
+            `${apigproducts}/pasarela/actualizar_open_pay`,
+            objToSave
+          ).subscribe(responseRegister => {
+            console.log('update_info_user', responseRegister)
+          })
+
           this.getstorepayment()
         }
       },
@@ -106,7 +123,7 @@ export class CashComponent implements OnInit {
               id_moodle_alumno: parseInt(this.generalInfo?.userId),
               id_plan_estudio: parseInt(this.generalInfo.id_plan_estudio),
               monto: resp?.amount,
-              id_servicio: parseInt(this.generalInfo?.idProduct),
+              id_servicio: parseInt(this.generalInfo?.id_servicio),
               status: resp?.status,
               order_id: resp?.payment_method?.reference,
               authorization: resp?.authorization,
