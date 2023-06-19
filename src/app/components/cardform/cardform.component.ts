@@ -4,8 +4,8 @@ import Swal from 'sweetalert2'
 import { RestService } from 'src/app/services/rest.service'
 import { apiopenpay, apigproducts } from 'src/app/services/config'
 declare var OpenPay: any
-OpenPay.setId('mbipwocgkvgkndoykdgg')
-OpenPay.setApiKey('pk_17b9d41b42464ddb8b707aa6141dd530')
+OpenPay.setId('m8qrwxynurdz6r7m9p4i')
+OpenPay.setApiKey('pk_2e2c7d4430844bcdb23fb3b50f37f782')
 OpenPay.setSandboxMode(true)
 const deviceSessionId = OpenPay.deviceData.setup(
   'payment-form',
@@ -105,7 +105,7 @@ export class CardComponent implements OnInit {
         ).subscribe(
           resp => {
             if (resp) {
-              const order_id = resp?.id //resp?.data?.order_id
+              const order_id = resp?.id //resp?.order_id
               if (order_id) {
                 let titleMsg = '',
                   descriptionMsg = ''
