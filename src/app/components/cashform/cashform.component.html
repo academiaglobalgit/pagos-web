@@ -2,6 +2,11 @@
   <div style="margin-bottom: 20px;">
 
 
+    <div *ngIf="!generalInfo?.email" class="form-group" style="text-align: left;">
+      <label for="yearexpired">Email escolar</label>
+      <input type="email" class="form-control" id="emailTyped" maxlength="2" placeholder="janeth@email.com"
+        (keyup)="onTypeEmail($event)">
+    </div>
     <button class="btn btn-primary" (click)="sendpay()">Obtener referencia de pago</button>
 
 

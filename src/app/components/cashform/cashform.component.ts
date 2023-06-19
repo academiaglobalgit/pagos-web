@@ -20,13 +20,21 @@ export class CashComponent implements OnInit {
   objPayment: any
   customerid: string = ''
   urlpdf: string = ''
+  askemail: boolean = false
+  emailTyped: string = ''
 
   constructor (
     private route: ActivatedRoute,
     private RestService: RestService
   ) {}
 
-  ngOnInit (): void {}
+  ngOnInit (): void {
+    this.askemail = this.generalInfo?.email
+  }
+
+  onTypeEmail (event: any) {
+    this.emailTyped = event.target.value
+  }
 
   getErrorGeneral () {
     setTimeout(() => {
@@ -38,7 +46,6 @@ export class CashComponent implements OnInit {
       })
     }, 600)
   }
-  
 
   createcustomer () {
     const customerRequest = {
@@ -61,6 +68,8 @@ export class CashComponent implements OnInit {
             id_plan_estudio: parseInt(this.generalInfo.id_plan_estudio),
             id_open_pay: resp?.id,
             email: this.generalInfo.email
+              ? this.generalInfo.email
+              : this.emailTyped
           }
 
           this.RestService.generalPatch(
@@ -81,11 +90,20 @@ export class CashComponent implements OnInit {
   }
 
   sendpay () {
-    if (this.generalInfo?.idopenpay) {
-      this.customerid = this.generalInfo?.idopenpay
-      this.getstorepayment()
+    if (this.generalInfo?.email || this.emailTyped) {
+      if (this.generalInfo?.idopenpay) {
+        this.customerid = this.generalInfo?.idopenpay
+        this.getstorepayment()
+      } else {
+        this.createcustomer()
+      }
     } else {
-      this.createcustomer()
+      Swal.fire({
+        icon: 'error',
+        title: '¡Error!',
+        text: 'Necesitas agregar tu correo, para poder continuar',
+        footer: ''
+      })
     }
   }
 
@@ -102,17 +120,19 @@ export class CashComponent implements OnInit {
         }
       }
 
-      if (typeof(this.generalInfo.id_moodle_materia) == 'undefined' && this.generalInfo.id_tipo_servicio == 12) {
+      if (
+        typeof this.generalInfo.id_moodle_materia == 'undefined' &&
+        this.generalInfo.id_tipo_servicio == 12
+      ) {
         Swal.fire({
           icon: 'error',
-          title:'Fallo en pago',
+          title: 'Fallo en pago',
           html: '<label>Es necesario una materia para este servicio.<strong>',
           showCancelButton: false,
           showConfirmButton: true
         })
-        return;
+        return
       }
-
 
       this.RestService.generalPost(
         `${apiopenpay}/charge/store`,
@@ -151,6 +171,22 @@ export class CashComponent implements OnInit {
             ).subscribe(responseRegister => {
               console.log('save_product_bought', responseRegister)
             })
+
+            //update idemail
+            if(!this.generalInfo.email && this.emailTyped){
+              const objToUpdate = {
+                id_moodle_alumno: parseInt(this.generalInfo?.userId),
+                id_plan_estudio: parseInt(this.generalInfo.id_plan_estudio),
+                email: this.emailTyped
+              }
+
+              this.RestService.generalPatch(
+                `${apigproducts}/pasarela/actualizar_open_pay`,
+                objToUpdate
+              ).subscribe(responseRegister => {
+                console.log('update_info_user', responseRegister)
+              })
+            }
           }
         },
         err => {

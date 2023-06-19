@@ -20,6 +20,7 @@ export class TransferformComponent implements OnInit {
   objPayment: any
   customerid: string = ''
   urlpdf: string = ''
+  emailTyped: string = ''
 
   constructor (
     private route: ActivatedRoute,
@@ -27,6 +28,10 @@ export class TransferformComponent implements OnInit {
   ) {}
 
   ngOnInit (): void {}
+
+  onTypeEmail (event: any) {
+    this.emailTyped = event.target.value
+  }
 
   getErrorGeneral () {
     setTimeout(() => {
@@ -42,7 +47,8 @@ export class TransferformComponent implements OnInit {
   createcustomer () {
     const customerRequest = {
       name: this.generalInfo.username + ' ' + this.generalInfo.lastName,
-      email: this.generalInfo.email,
+      email: this.generalInfo.email ? this.generalInfo.email
+      : this.emailTyped,
       requires_account: false
     }
 
@@ -64,11 +70,20 @@ export class TransferformComponent implements OnInit {
   }
 
   sendpay () {
-    if (this.generalInfo?.idopenpay) {
-      this.customerid = this.generalInfo?.idopenpay
-      this.getstorepayment()
+    if (this.generalInfo?.email || this.emailTyped) {
+      if (this.generalInfo?.idopenpay) {
+        this.customerid = this.generalInfo?.idopenpay
+        this.getstorepayment()
+      } else {
+        this.createcustomer()
+      }
     } else {
-      this.createcustomer()
+      Swal.fire({
+        icon: 'error',
+        title: '¡Error!',
+        text: 'Necesitas agregar tu correo, para poder continuar',
+        footer: ''
+      })
     }
   }
 
@@ -120,6 +135,22 @@ export class TransferformComponent implements OnInit {
             ).subscribe(responseRegister => {
               console.log('save_product_bought', responseRegister)
             })
+
+            //update idemail
+            if(!this.generalInfo.email && this.emailTyped){
+              const objToUpdate = {
+                id_moodle_alumno: parseInt(this.generalInfo?.userId),
+                id_plan_estudio: parseInt(this.generalInfo.id_plan_estudio),
+                email: this.emailTyped
+              }
+
+              this.RestService.generalPatch(
+                `${apigproducts}/pasarela/actualizar_open_pay`,
+                objToUpdate
+              ).subscribe(responseRegister => {
+                console.log('update_info_user', responseRegister)
+              })
+            }
           }
         },
         err => {
