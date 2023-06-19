@@ -87,6 +87,18 @@ export class CardComponent implements OnInit {
       }
 
       try {
+
+        if (typeof(this.generalInfo.id_moodle_materia) == 'undefined' && this.generalInfo.id_tipo_servicio == 12) {
+          Swal.fire({
+            icon: 'error',
+            title:'Fallo en pago',
+            html: '<label>Es necesario una materia para este servicio.<strong>',
+            showCancelButton: false,
+            showConfirmButton: true
+          })
+          return;
+        }
+
         this.RestService.generalPost(
           `${apiopenpay}/charge/card`,
           objPayment
@@ -124,6 +136,7 @@ export class CardComponent implements OnInit {
               const objToSave = {
                 id_moodle_alumno: parseInt(this.generalInfo?.userId),
                 id_plan_estudio: parseInt(this.generalInfo.id_plan_estudio),
+                id_moodle_materia: this.generalInfo.id_moodle_materia ?? null,
                 monto: parseFloat(resp?.amount),
                 id_servicio: parseInt(this.generalInfo?.id_servicio),
                 status: resp?.status,

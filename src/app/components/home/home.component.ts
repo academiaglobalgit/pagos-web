@@ -18,6 +18,7 @@ export class HomeComponent implements OnInit {
   nameProduct: string = ''
   priceProduct: number = 0
   chargeService: number = 0
+  id_moodle_materia: any = null
   //@Input() total: number = 0
   userId: number = 0
   username: string = ''
@@ -35,6 +36,7 @@ export class HomeComponent implements OnInit {
       this.idProduct = params?.idproduct
       this.userId = params?.userid
       this.id_plan_estudio = params?.idplanestudio
+      this.id_moodle_materia = params.idmoodlemateria;
 
       this.getProductInfo(params?.idproduct)
       this.getUserInfo(params?.userid)
@@ -51,8 +53,7 @@ export class HomeComponent implements OnInit {
             const dataProduct = resp.data
             for (let index = 0; index < dataProduct.length; index++) {
               const element = dataProduct[index]
-
-              if (element.id_tipo_servicio === parseInt(idproduct)) {
+              if (element.id_servicio === parseInt(idproduct)) {
                 this.nameProduct = element.nombre
                 const priceProduct = element.monto ? element.monto : 1.0
 
@@ -68,7 +69,9 @@ export class HomeComponent implements OnInit {
                     total: total,
                     nameProduct: element.nombre,
                     idProduct: this.idProduct,
-                    id_servicio: element.id_servicio
+                    id_servicio: element.id_servicio,
+                    id_moodle_materia: this.id_moodle_materia,
+                    id_tipo_servicio: element.id_tipo_servicio
                   }
                 }
               }
@@ -97,6 +100,7 @@ export class HomeComponent implements OnInit {
               email: data.email,
               idopenpay: data.id_open_pay,
               id_plan_estudio: this.id_plan_estudio,
+              id_moodle_materia: this.id_moodle_materia
             }
           }
         }
