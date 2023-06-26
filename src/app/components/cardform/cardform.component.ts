@@ -4,8 +4,8 @@ import Swal from 'sweetalert2'
 import { RestService } from 'src/app/services/rest.service'
 import { apiopenpay, apigproducts } from 'src/app/services/config'
 declare var OpenPay: any
-OpenPay.setId('m8qrwxynurdz6r7m9p4i')
-OpenPay.setApiKey('pk_2e2c7d4430844bcdb23fb3b50f37f782')
+OpenPay.setId('mbipwocgkvgkndoykdgg')
+OpenPay.setApiKey('pk_17b9d41b42464ddb8b707aa6141dd530')
 OpenPay.setSandboxMode(true)
 const deviceSessionId = OpenPay.deviceData.setup(
   'payment-form',
@@ -20,6 +20,7 @@ const timerLoading = 600
 export class CardComponent implements OnInit {
   @Input() item = ''
   @Input() generalInfo: any
+  @Input() typeEmail: any
 
   card_number: string = ''
   holder_name: string = ''
@@ -29,6 +30,7 @@ export class CardComponent implements OnInit {
   objCard: any
   objPayment: any
   chickedSend: boolean = false
+  errorEmail: boolean = false
 
   constructor (
     private route: ActivatedRoute,
@@ -57,6 +59,14 @@ export class CardComponent implements OnInit {
     this.cvv2 = event.target.value
     this.chickedSend = false
   }
+  onTypeEmail (event: any) {
+    const mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if(event.target.value.match(mailformat))
+    {
+      this.generalInfo.email = event.target.value
+      this.errorEmail = false
+    } else this.errorEmail = true
+  }
 
   getErrorGeneral () {
     setTimeout(() => {
@@ -67,6 +77,24 @@ export class CardComponent implements OnInit {
         footer: ''
       })
     }, 600)
+  }
+
+  updateEmail(){
+    if(!this.generalInfo.email){
+      const objToUpdate = {
+        id_moodle_alumno: parseInt(this.generalInfo?.userId),
+        id_plan_estudio: parseInt(this.generalInfo.id_plan_estudio),
+        email: this.generalInfo.email,
+        id_open_pay: this.generalInfo.idopenpay
+      }
+
+      this.RestService.generalPatch(
+        `${apigproducts}/pasarela/actualizar_open_pay`,
+        objToUpdate
+      ).subscribe(responseRegister => {
+        console.log('update_info_email', responseRegister)
+      })
+    }
   }
 
   SuccessCallbackRegister (response: any) {
@@ -86,18 +114,19 @@ export class CardComponent implements OnInit {
         }
       }
 
-      try {
+      //validar materia
+      if (typeof(this.generalInfo.id_moodle_materia) == 'undefined' && this.generalInfo.id_tipo_servicio == 12) {
+        Swal.fire({
+          icon: 'error',
+          title:'Fallo en pago',
+          html: '<label>Es necesario una materia para este servicio.<strong>',
+          showCancelButton: false,
+          showConfirmButton: true
+        })
+        return;
+      }
 
-        if (typeof(this.generalInfo.id_moodle_materia) == 'undefined' && this.generalInfo.id_tipo_servicio == 12) {
-          Swal.fire({
-            icon: 'error',
-            title:'Fallo en pago',
-            html: '<label>Es necesario una materia para este servicio.<strong>',
-            showCancelButton: false,
-            showConfirmButton: true
-          })
-          return;
-        }
+      try {
 
         this.RestService.generalPost(
           `${apiopenpay}/charge/card`,
@@ -196,7 +225,8 @@ export class CardComponent implements OnInit {
       this.holder_name &&
       this.expiration_year &&
       this.expiration_month &&
-      this.cvv2
+      this.cvv2 &&
+      this.generalInfo.email
     ) {
       this.objCard = {
         card_number: this.card_number,
@@ -215,6 +245,9 @@ export class CardComponent implements OnInit {
         },
         this.ErrorCallbackRegister
       )
+
+      //update email
+      this.updateEmail();
     }
   }
 }

@@ -1,10 +1,11 @@
 <div>
   <div style="margin-bottom: 20px;">
 
-    <div *ngIf="!generalInfo?.email" class="form-group" style="text-align: left;">
+    <div class="form-group">
       <label for="yearexpired">Email escolar</label>
-      <input type="email" class="form-control" id="emailTyped" maxlength="2" placeholder="janeth@email.com"
-        (keyup)="onTypeEmail($event)">
+      <input type="email" class="form-control" id="emailTyped" placeholder="janeth@email.com"
+        (keyup)="onTypeEmail($event)" value="{{ generalInfo.email }}" id="cardform">
+        <label *ngIf="chickedSend && errorEmail" class="label-error">Email incorrecto</label>
     </div>
     <button class="btn btn-primary" (click)="sendpay()">Obtener información de pago</button>
 

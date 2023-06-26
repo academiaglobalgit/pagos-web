@@ -21,6 +21,8 @@ export class TransferformComponent implements OnInit {
   customerid: string = ''
   urlpdf: string = ''
   emailTyped: string = ''
+  chickedSend: boolean = false
+  errorEmail: boolean = false
 
   constructor (
     private route: ActivatedRoute,
@@ -30,7 +32,13 @@ export class TransferformComponent implements OnInit {
   ngOnInit (): void {}
 
   onTypeEmail (event: any) {
-    this.emailTyped = event.target.value
+    this.chickedSend = false
+    const mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if(event.target.value.match(mailformat))
+    {
+      this.generalInfo.email = event.target.value
+      this.errorEmail = false
+    } else this.errorEmail = true
   }
 
   getErrorGeneral () {
@@ -59,7 +67,12 @@ export class TransferformComponent implements OnInit {
       resp => {
         if (resp && resp?.id) {
           this.customerid = resp?.id
-          this.getstorepayment()
+          
+          //update idopenpay
+          this.updateEmail(resp?.id)
+
+          //process payment
+          this.getstorepayment(true)
         }
       },
       err => {
@@ -70,29 +83,44 @@ export class TransferformComponent implements OnInit {
   }
 
   sendpay () {
-    if (this.generalInfo?.email || this.emailTyped) {
+    this.chickedSend = true
+    if(!this.errorEmail){
       if (this.generalInfo?.idopenpay) {
         this.customerid = this.generalInfo?.idopenpay
         this.getstorepayment()
       } else {
         this.createcustomer()
       }
-    } else {
-      Swal.fire({
-        icon: 'error',
-        title: '¡Error!',
-        text: 'Necesitas agregar tu correo, para poder continuar',
-        footer: ''
-      })
     }
   }
 
-  getstorepayment () {
+  getstorepayment (addedopenpay: Boolean = false) {
     Swal.showLoading()
+    //actualizar si no es nuevo usuario
+    if (!addedopenpay) {
+      this.updateEmail('')
+    }
+
+    //validar materia
+    if (
+      typeof this.generalInfo.id_moodle_materia == 'undefined' &&
+      this.generalInfo.id_tipo_servicio == 12
+    ) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Fallo en pago',
+        html: '<label>Es necesario una materia para este servicio.<strong>',
+        showCancelButton: false,
+        showConfirmButton: true
+      })
+      return
+    }
+
     //crear voucher
     try {
       const objstore = {
         customerid: this.customerid,
+        email: this.generalInfo.email,
         data: {
           method: 'bank_account',
           amount: this.generalInfo?.total.toFixed(2),
@@ -135,22 +163,6 @@ export class TransferformComponent implements OnInit {
             ).subscribe(responseRegister => {
               console.log('save_product_bought', responseRegister)
             })
-
-            //update idemail
-            if(!this.generalInfo.email && this.emailTyped){
-              const objToUpdate = {
-                id_moodle_alumno: parseInt(this.generalInfo?.userId),
-                id_plan_estudio: parseInt(this.generalInfo.id_plan_estudio),
-                email: this.emailTyped
-              }
-
-              this.RestService.generalPatch(
-                `${apigproducts}/pasarela/actualizar_open_pay`,
-                objToUpdate
-              ).subscribe(responseRegister => {
-                console.log('update_info_user', responseRegister)
-              })
-            }
           }
         },
         err => {
@@ -163,5 +175,23 @@ export class TransferformComponent implements OnInit {
     }
   }
 
+  updateEmail (openid: any) {
+    if (this.generalInfo.email) {
+      this.generalInfo.openid = openid ? openid : this.generalInfo.idopenpay
+      const objToUpdate = {
+        id_moodle_alumno: parseInt(this.generalInfo?.userId),
+        id_plan_estudio: parseInt(this.generalInfo.id_plan_estudio),
+        email: this.generalInfo.email,
+        id_open_pay: openid ? openid : this.generalInfo.idopenpay
+      }
+
+      this.RestService.generalPatch(
+        `${apigproducts}/pasarela/actualizar_open_pay`,
+        objToUpdate
+      ).subscribe(responseRegister => {
+        console.log('update_info_email', responseRegister)
+      })
+    }
+  }
   
 }

@@ -22,6 +22,8 @@ export class CashComponent implements OnInit {
   urlpdf: string = ''
   askemail: boolean = false
   emailTyped: string = ''
+  chickedSend: boolean = false
+  errorEmail: boolean = false
 
   constructor (
     private route: ActivatedRoute,
@@ -33,7 +35,12 @@ export class CashComponent implements OnInit {
   }
 
   onTypeEmail (event: any) {
-    this.emailTyped = event.target.value
+    this.chickedSend = false
+    const mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+    if (event.target.value.match(mailformat)) {
+      this.generalInfo.email = event.target.value
+      this.errorEmail = false
+    } else this.errorEmail = true
   }
 
   getErrorGeneral () {
@@ -63,23 +70,10 @@ export class CashComponent implements OnInit {
           this.customerid = resp?.id
 
           //update idopenpay
-          const objToSave = {
-            id_moodle_alumno: parseInt(this.generalInfo?.userId),
-            id_plan_estudio: parseInt(this.generalInfo.id_plan_estudio),
-            id_open_pay: resp?.id,
-            email: this.generalInfo.email
-              ? this.generalInfo.email
-              : this.emailTyped
-          }
+          this.updateEmail(resp?.id)
 
-          this.RestService.generalPatch(
-            `${apigproducts}/pasarela/actualizar_open_pay`,
-            objToSave
-          ).subscribe(responseRegister => {
-            console.log('update_info_user', responseRegister)
-          })
-
-          this.getstorepayment()
+          //process payment
+          this.getstorepayment(true)
         }
       },
       err => {
@@ -90,48 +84,49 @@ export class CashComponent implements OnInit {
   }
 
   sendpay () {
-    if (this.generalInfo?.email || this.emailTyped) {
+    this.chickedSend = true
+    if(!this.errorEmail){
       if (this.generalInfo?.idopenpay) {
         this.customerid = this.generalInfo?.idopenpay
         this.getstorepayment()
       } else {
         this.createcustomer()
       }
-    } else {
-      Swal.fire({
-        icon: 'error',
-        title: '¡Error!',
-        text: 'Necesitas agregar tu correo, para poder continuar',
-        footer: ''
-      })
     }
   }
 
-  getstorepayment () {
+  getstorepayment (addedopenpay: Boolean = false) {
     Swal.showLoading()
+    //actualizar si no es nuevo usuario
+    if (!addedopenpay) {
+      this.updateEmail('')
+    }
+
+    //validar materia
+    if (
+      typeof this.generalInfo.id_moodle_materia == 'undefined' &&
+      this.generalInfo.id_tipo_servicio == 12
+    ) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Fallo en pago',
+        html: '<label>Es necesario una materia para este servicio.<strong>',
+        showCancelButton: false,
+        showConfirmButton: true
+      })
+      return
+    }
+
     //crear voucher
     try {
       const objstore = {
         customerid: this.customerid,
+        email: this.generalInfo.email,
         data: {
           method: 'store',
           amount: this.generalInfo?.total.toFixed(2),
           description: this.generalInfo.nameProduct
         }
-      }
-
-      if (
-        typeof this.generalInfo.id_moodle_materia == 'undefined' &&
-        this.generalInfo.id_tipo_servicio == 12
-      ) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Fallo en pago',
-          html: '<label>Es necesario una materia para este servicio.<strong>',
-          showCancelButton: false,
-          showConfirmButton: true
-        })
-        return
       }
 
       this.RestService.generalPost(
@@ -171,22 +166,6 @@ export class CashComponent implements OnInit {
             ).subscribe(responseRegister => {
               console.log('save_product_bought', responseRegister)
             })
-
-            //update idemail
-            if(!this.generalInfo.email && this.emailTyped){
-              const objToUpdate = {
-                id_moodle_alumno: parseInt(this.generalInfo?.userId),
-                id_plan_estudio: parseInt(this.generalInfo.id_plan_estudio),
-                email: this.emailTyped
-              }
-
-              this.RestService.generalPatch(
-                `${apigproducts}/pasarela/actualizar_open_pay`,
-                objToUpdate
-              ).subscribe(responseRegister => {
-                console.log('update_info_user', responseRegister)
-              })
-            }
           }
         },
         err => {
@@ -196,6 +175,25 @@ export class CashComponent implements OnInit {
       )
     } catch (error) {
       this.getErrorGeneral()
+    }
+  }
+
+  updateEmail (openid: any) {
+    if (this.generalInfo.email) {
+      this.generalInfo.openid = openid ? openid : this.generalInfo.idopenpay
+      const objToUpdate = {
+        id_moodle_alumno: parseInt(this.generalInfo?.userId),
+        id_plan_estudio: parseInt(this.generalInfo.id_plan_estudio),
+        email: this.generalInfo.email,
+        id_open_pay: openid ? openid : this.generalInfo.idopenpay
+      }
+
+      this.RestService.generalPatch(
+        `${apigproducts}/pasarela/actualizar_open_pay`,
+        objToUpdate
+      ).subscribe(responseRegister => {
+        console.log('update_info_email', responseRegister)
+      })
     }
   }
 }

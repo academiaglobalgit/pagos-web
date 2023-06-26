@@ -1,6 +1,13 @@
 <div>
   <div>
     <div class="form-group">
+      <label for="yearexpired">Email escolar</label>
+      <input type="email" class="form-control" id="emailTyped" placeholder="janeth@email.com"
+        (keyup)="onTypeEmail($event)" value="{{ generalInfo.email }}" id="cardform">
+        <label *ngIf="chickedSend && errorEmail" class="label-error">Email incorrecto</label>
+    </div>
+    <div class="form-group">
+      
       <label for="cardnumber">Numero de tarjeta</label>
       <input class="form-control" id="cardnumber" name="cardnumber" type="tel" inputmode="numeric"
         pattern="[0-9\s]{13,19}" autocomplete="cc-number" maxlength="16" placeholder="xxxx xxxx xxxx xxxx"
@@ -33,8 +40,8 @@
       </div>
       <div class="col-sm-4">
         <div class="form-group">
-          <label for="yearexpired">CCV</label>
-          <input class="form-control" type="password" pattern="\d*" maxlength="3" placeholder="CVC"
+          <label for="yearexpired">CVV</label>
+          <input class="form-control" type="password" pattern="\d*" maxlength="3" placeholder="234"
             (keyup)="onTypeCCV($event)">
           <label *ngIf="chickedSend && !cvv2" class="label-error">Este campo es requerido</label>
         </div>
