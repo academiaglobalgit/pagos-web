@@ -134,7 +134,7 @@ export class TransferformComponent implements OnInit {
         resp => {
           if (resp?.payment_method?.name) {
             //success
-            this.urlpdf = `${dashboardopenpay}/spei-pdf/mbipwocgkvgkndoykdgg/${resp?.id}`
+            this.urlpdf = `${dashboardopenpay}/spei-pdf/m8qrwxynurdz6r7m9p4i/${resp?.id}`
             const htmlContent = `<a class="btn btn-primary" href="${this.urlpdf}" target="_blank">Descargar pdf</a>`
             Swal.fire({
               icon: 'success',
