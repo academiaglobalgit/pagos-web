@@ -107,4 +107,9 @@ export class HomeComponent implements OnInit {
       })
     }
   }
+
+  cerrarModal() {
+    console.log('bandera');
+    window.parent.postMessage('cerrarModalPago', '*');
+  }
 }

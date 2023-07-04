@@ -4,6 +4,36 @@
       <div class="col-sm-12 divprocesspay">
         <h1>Procesar pago</h1>
       </div>
+      <div class="col-sm-4">
+        <div class="card-component deatailsbuy">
+          <h6>Detalles de compra</h6>
+          <div class="row linedetails">
+            <div class="col-sm-7 descriptionbuy">
+              <label>{{nameProduct}}</label>
+            </div>
+            <div class="col-sm-5 pricebuy">
+              <label>$ {{priceProduct}} MXN</label>
+            </div>
+          </div>
+          <div class="row linedetails">
+            <div class="col-sm-7 descriptionbuy">
+              <label>Cargo por servicio</label>
+            </div>
+            <div class="col-sm-5 pricebuy">
+              <label>$ {{chargeService.toFixed(2)}} MXN</label>
+            </div>
+          </div>
+          <div class="row linedetails">
+            <div class="col-sm-7 descriptionbuy">
+              <label><strong>Total</strong></label>
+            </div>
+            <div class="col-sm-5 pricebuy">
+              <label>$ {{(chargeService + priceProduct).toFixed(2)}} MXN</label>
+            </div>
+          </div>
+        </div>
+
+      </div>
       <div class="col-sm-8">
         <div class="card-component">
           <h6>Tipo de pago</h6>
@@ -85,39 +115,15 @@
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-sm-4">
-        <div class="card-component deatailsbuy">
-          <h6>Detalles de compra</h6>
-          <div class="row linedetails">
-            <div class="col-sm-7 descriptionbuy">
-              <label>{{nameProduct}}</label>
-            </div>
-            <div class="col-sm-5 pricebuy">
-              <label>$ {{priceProduct}} MXN</label>
-            </div>
-          </div>
-          <div class="row linedetails">
-            <div class="col-sm-7 descriptionbuy">
-              <label>Cargo por servicio</label>
-            </div>
-            <div class="col-sm-5 pricebuy">
-              <label>$ {{chargeService.toFixed(2)}} MXN</label>
-            </div>
-          </div>
-          <div class="row linedetails">
-            <div class="col-sm-7 descriptionbuy">
-              <label><strong>Total</strong></label>
-            </div>
-            <div class="col-sm-5 pricebuy">
-              <label>$ {{(chargeService + priceProduct).toFixed(2)}} MXN</label>
-            </div>
-          </div>
-        </div>
 
+          <button 
+            class="btn btn-danger btn-lg btn-block mt-4" 
+            (click)="cerrarModal()"
+          >Cerrar</button>
+          </div>
+        </div>
       </div>
+      
     </div>
   </div>
 </div>
