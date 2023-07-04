@@ -124,7 +124,7 @@ export class CashComponent implements OnInit {
         email: this.generalInfo.email,
         data: {
           method: 'store',
-          amount: this.generalInfo?.total.toFixed(2),
+          amount: parseFloat(this.generalInfo?.total.toFixed(2)),
           description: this.generalInfo.nameProduct
         }
       }
@@ -136,7 +136,7 @@ export class CashComponent implements OnInit {
         resp => {
           if (resp?.payment_method) {
             //success
-            this.urlpdf = `${dashboardopenpay}/paynet-pdf/mbipwocgkvgkndoykdgg/${resp?.payment_method?.reference}`
+            this.urlpdf = `${dashboardopenpay}/paynet-pdf/m8qrwxynurdz6r7m9p4i/transaction/${resp?.id}`
             const htmlContent = `<a class="btn btn-primary" href="${this.urlpdf}" target="_blank">Descargar pdf</a>`
             Swal.fire({
               icon: 'success',
