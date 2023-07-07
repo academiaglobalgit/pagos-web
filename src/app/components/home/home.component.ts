@@ -38,8 +38,8 @@ export class HomeComponent implements OnInit {
       this.id_plan_estudio = params?.idplanestudio
       this.id_moodle_materia = params.idmoodlemateria;
 
-      this.getProductInfo(params?.idproduct)
-      this.getUserInfo(params?.userid)
+      this.getProductInfo(params?.idproduct);
+      this.getUserInfo(params?.userid);
     })
   }
 
@@ -88,6 +88,8 @@ export class HomeComponent implements OnInit {
         apigproducts +
           `/pasarela/get_informacion_usuario?pe=${this.id_plan_estudio}&ma=${this.userId}`
       ).subscribe(resp => { 
+        // console.log('end', resp);
+        
         if (resp?.data) {
           let data = resp.data;
           data = data[0];
@@ -103,8 +105,11 @@ export class HomeComponent implements OnInit {
               id_moodle_materia: this.id_moodle_materia
             }
           }
+
+          console.log('datainfoHome', this.dataInfo);
         }
-      })
+
+      });
     }
   }
 

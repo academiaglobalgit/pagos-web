@@ -17,6 +17,7 @@ import { CashComponent } from './components/cashform/cashform.component'
 import { TransferformComponent } from './components/transferform/transferform.component'
 import { HttpClientModule } from '@angular/common/http';
 
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 @NgModule({
   declarations: [
     AppComponent,
@@ -35,7 +36,9 @@ import { HttpClientModule } from '@angular/common/http';
     MatFormFieldModule,
     MatTreeModule,
     StoreModule.forRoot({singleBookReducer}),
-    HttpClientModule
+    HttpClientModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

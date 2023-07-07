@@ -1,57 +1,156 @@
 <div>
-  <div>
-    <div class="form-group">
-      <label for="yearexpired">Email escolar</label>
-      <input type="email" class="form-control" id="emailTyped" placeholder="janeth@email.com"
-        (keyup)="onTypeEmail($event)" value="{{ generalInfo.email }}" id="cardform">
-        <label *ngIf="chickedSend && errorEmail" class="label-error">Email incorrecto</label>
-    </div>
-    <div class="form-group">
-      
-      <label for="cardnumber">Numero de tarjeta</label>
-      <input class="form-control" id="cardnumber" name="cardnumber" type="tel" inputmode="numeric"
-        pattern="[0-9\s]{13,19}" autocomplete="cc-number" maxlength="16" placeholder="xxxx xxxx xxxx xxxx"
-        (keyup)="onTypeNumber($event)" required>
+  <form [formGroup]="cardForm" (ngSubmit)="sendpay()">
+    <div>
+      <div class="form-group" >
+        <label for="yearexpired">Email escolar</label>
+        <input 
+          type="email" 
+          class="form-control" 
+          placeholder="janeth@email.com" 
+          formControlName="email"
+          >
+          <div *ngIf="cardForm.get('email')!.errors && cardForm.get('email')!.dirty">
+            <label *ngIf="cardForm.get('email')!.hasError('required')" class="label-error">Correo electronico requerido </label> 
+            <label *ngIf="cardForm.get('email')!.hasError('pattern')" class="label-error">Email incorrecto </label> 
+          </div>
 
-      <label *ngIf="chickedSend && !card_number" class="label-error">Este campo es requerido</label>
-    </div>
-    <div class="form-group">
-      <label for="nameuser">Nombre completo (como aparece en la tarjeta)</label>
-      <input type="text" class="form-control" id="nameuser" placeholder="Adriana Maldonado Salazar"
-        (keyup)="onTypeName($event)">
-      <label *ngIf="chickedSend && !holder_name" class="label-error">Este campo es requerido</label>
-    </div>
-    <div class="row">
-      <div class="col-sm-4">
-        <div class="form-group">
-          <label for="monthexpired">Mes de expiración</label>
-          <input type="tel" class="form-control" id="monthexpired" maxlength="2" placeholder="05"
-            (keyup)="onTypeExpirationMonth($event)">
-          <label *ngIf="chickedSend && !expiration_month" class="label-error">Este campo es requerido</label>
+      </div>
+      <div class="form-group">
+        
+        <label for="cardnumber">Numero de tarjeta</label>
+        <input 
+          class="form-control" 
+          type="tel" 
+          inputmode="numeric"
+          pattern="[0-9\s]{13,19}" 
+          autocomplete="cc-number" 
+          placeholder="xxxx xxxx xxxx xxxx"
+          formControlName="card_number"
+          required>
+
+          <div *ngIf="cardForm.get('card_number')!.errors && cardForm.get('card_number')!.dirty">
+            <label 
+              *ngIf="cardForm.get('card_number')!.hasError('required')" 
+              class="label-error"
+            >Numero de tarjeta requerido.</label> 
+            <label 
+              *ngIf="cardForm.get('card_number')!.hasError('pattern')" 
+              class="label-error"
+            >Aseguerese que sea un numero de tarjeta valido. </label> 
+            <label 
+              *ngIf="cardForm.get('card_number')!.hasError('maxlength')" 
+              class="label-error"
+            >Numero de tarjeta de credito debe ser menor o igual a 16 digitos </label> 
+          </div>
+
+      </div>
+      <div class="form-group">
+        <label for="nameuser">Nombre completo (como aparece en la tarjeta)</label>
+        <input 
+          type="text" 
+          class="form-control" 
+          placeholder="Adriana Maldonado Salazar"
+          formControlName="holder_name"
+        >
+
+        <div *ngIf="cardForm.get('holder_name')!.errors && cardForm.get('holder_name')!.dirty">
+          <label 
+            *ngIf="cardForm.get('holder_name')!.hasError('required')" 
+            class="label-error"
+          >Nombre es requerido.</label> 
+          <label 
+            *ngIf="cardForm.get('holder_name')!.hasError('pattern')" 
+            class="label-error"
+          >Nombre debe ser valido</label> 
+          
+        </div>
+
+      </div>
+      <div class="row">
+        <div class="col-sm-4">
+          <div class="form-group">
+            <label for="monthexpired">Mes de expiración</label>
+            <input 
+              type="tel" 
+              class="form-control" 
+              maxlength="2" 
+              placeholder="05"
+              formControlName="expiration_month"
+            >
+
+            <div *ngIf="cardForm.get('expiration_month')!.errors && cardForm.get('expiration_month')!.dirty">
+              <label 
+                *ngIf="cardForm.get('expiration_month')!.hasError('required')" 
+                class="label-error"
+              >Mes de expiracion es requerido.</label> 
+              <label 
+                *ngIf="cardForm.get('expiration_month')!.hasError('pattern')" 
+                class="label-error"
+              >Mes de expiracion debe ser valido.</label> 
+              
+            </div>
+
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <div class="form-group">
+            <label for="yearexpired">Año de expiración</label>
+            <input 
+              type="tel" 
+              class="form-control" 
+              maxlength="2" 
+              placeholder="27"
+              formControlName="expiration_year"
+            >
+
+            <div *ngIf="cardForm.get('expiration_year')!.errors && cardForm.get('expiration_year')!.dirty">
+              <label 
+                *ngIf="cardForm.get('expiration_year')!.hasError('required')" 
+                class="label-error"
+              >Año de expiracion es requerido.</label> 
+              <label 
+                *ngIf="cardForm.get('expiration_year')!.hasError('pattern')" 
+                class="label-error"
+              >Año de expiracion debe ser valido.</label> 
+              
+            </div>
+
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <div class="form-group">
+            <label for="yearexpired">CVV</label>
+            <input 
+              class="form-control" 
+              type="password" 
+              maxlength="4" 
+              placeholder="234"
+              formControlName="cvv2"
+            >
+
+            <div *ngIf="cardForm.get('cvv2')!.errors && cardForm.get('cvv2')!.dirty">
+              <label 
+                *ngIf="cardForm.get('cvv2')!.hasError('required')" 
+                class="label-error"
+              >CVV es requerido.</label> 
+              <label 
+                *ngIf="cardForm.get('cvv2')!.hasError('pattern')" 
+                class="label-error"
+              >CVV debe ser valido.</label> 
+              
+            </div>
+  
+          </div>
         </div>
       </div>
-      <div class="col-sm-4">
-        <div class="form-group">
-          <label for="yearexpired">Año de expiración</label>
-          <input type="tel" class="form-control" id="yearexpired" maxlength="2" placeholder="27"
-            (keyup)="onTypeExpirationYear($event)">
-          <label *ngIf="chickedSend && !expiration_year" class="label-error">Este campo es requerido</label>
-        </div>
-      </div>
-      <div class="col-sm-4">
-        <div class="form-group">
-          <label for="yearexpired">CVV</label>
-          <input class="form-control" type="password" pattern="\d*" maxlength="3" placeholder="234"
-            (keyup)="onTypeCCV($event)">
-          <label *ngIf="chickedSend && !cvv2" class="label-error">Este campo es requerido</label>
-        </div>
-      </div>
+
+      <!-- <button class="btn btn-primary" (click)="sendpay()">Procesar pago</button> -->
+      <button 
+        class="btn btn-primary" 
+        type="submit" 
+        [disabled]="cardForm.invalid"
+      >Procesar pago</button>
+
     </div>
-
-    <button class="btn btn-primary" (click)="sendpay()">Procesar pago</button>
-
-
-
-  </div>
-
+  </form>
 </div>
