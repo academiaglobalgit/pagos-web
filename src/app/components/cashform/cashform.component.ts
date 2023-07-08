@@ -66,8 +66,8 @@ export class CashComponent implements OnInit {
 
   createcustomer () {
     const customerRequest = {
-      name: this.generalInfo.username + ' ' + this.generalInfo.lastName,
-      email: this.generalInfo.email,
+      name: this.receivedData.username + ' ' + this.receivedData.lastName,
+      email: this.receivedData.email,
       requires_account: false
     }
 
@@ -147,7 +147,7 @@ export class CashComponent implements OnInit {
         objstore
       ).pipe(
           switchMap(
-            (res1, index) => {
+            (res1) => {
               res = res1;
               //enviar datos DB
               const objToSave = {
@@ -177,16 +177,21 @@ export class CashComponent implements OnInit {
         next: (res2) =>{
           console.log('res2', res2);
           
-          
-          this.urlpdf = `${dashboardopenpay}/paynet-pdf/m8qrwxynurdz6r7m9p4i/transaction/${res?.id}`
-          const htmlContent = `<a class="btn btn-primary" href="${this.urlpdf}" target="_blank">Descargar pdf</a>`
-          Swal.fire({
-            icon: 'success',
-            title: 'Se ha generado con exito tu voucher',
-            html: htmlContent,
-            showCancelButton: true,
-            showConfirmButton: false
-          });
+          if (res2.success && res2.data[0].success == 1) {
+            this.urlpdf = `${dashboardopenpay}/paynet-pdf/m8qrwxynurdz6r7m9p4i/transaction/${res?.id}`
+            const htmlContent = `<a class="btn btn-primary" href="${this.urlpdf}" target="_blank">Descargar pdf</a>`
+            Swal.fire({
+              icon: 'success',
+              title: 'Se ha generado con exito tu voucher',
+              html: htmlContent,
+              showCancelButton: true,
+              showConfirmButton: false,
+              allowOutsideClick: false,
+              allowEscapeKey: false
+            });
+          }else{
+            this.getErrorGeneral();
+          }
 
         },
         error: (err) =>{

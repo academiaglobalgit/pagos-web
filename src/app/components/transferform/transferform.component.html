@@ -1,13 +1,31 @@
 <div>
   <div style="margin-bottom: 20px;">
 
-    <div class="form-group">
-      <label for="yearexpired">Email escolar</label>
-      <input type="email" class="form-control" id="emailTyped" placeholder="janeth@email.com"
-        (keyup)="onTypeEmail($event)" value="{{ generalInfo.email }}" id="cardform">
-        <label *ngIf="chickedSend && errorEmail" class="label-error">Email incorrecto</label>
-    </div>
-    <button class="btn btn-primary" (click)="sendpay()">Obtener información de pago</button>
+    <form [formGroup]="transferForm" (ngSubmit)="sendpay()">
+
+      <div class="form-group">
+        <label for="yearexpired">Email escolar</label>
+        <input 
+          type="email" 
+          class="form-control" 
+          id="emailTyped" 
+          placeholder="janeth@email.com"
+          formControlName="email"
+          id="cardform">
+          
+          <div *ngIf="transferForm.get('email')!.errors && transferForm.get('email')!.dirty">
+            <label *ngIf="transferForm.get('email')!.hasError('required')" class="label-error">Correo electronico requerido. </label> 
+            <label *ngIf="transferForm.get('email')!.hasError('pattern')" class="label-error">Email incorrecto. </label> 
+          </div>
+      </div>
+      <!-- <button class="btn btn-primary" (click)="sendpay()">Obtener información de pago</button> -->
+      <button 
+        class="btn btn-primary" 
+        type="submit"
+        [disabled]="transferForm.invalid"
+      >Obtener información de pago</button>
+
+    </form>
 
 
 

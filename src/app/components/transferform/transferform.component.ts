@@ -1,12 +1,14 @@
-import { Component, OnInit, Input } from '@angular/core'
+import { Component, OnInit, Input, ChangeDetectorRef } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
 import Swal from 'sweetalert2'
+import { switchMap, catchError } from 'rxjs/operators';
 import { RestService } from 'src/app/services/rest.service'
 import {
   apiopenpay,
   dashboardopenpay,
   apigproducts
 } from 'src/app/services/config'
+import { FormControl, FormGroup, Validators } from '@angular/forms'
 @Component({
   selector: 'app-transferform',
   templateUrl: './transferform.component.html',
@@ -15,7 +17,9 @@ import {
 export class TransferformComponent implements OnInit {
   @Input() item = ''
   @Input() generalInfo: any
+  receivedData: any = {};
 
+  transferForm: FormGroup;
   objCard: any
   objPayment: any
   customerid: string = ''
@@ -26,10 +30,22 @@ export class TransferformComponent implements OnInit {
 
   constructor (
     private route: ActivatedRoute,
-    private RestService: RestService
-  ) {}
+    private RestService: RestService,
+    private cdr: ChangeDetectorRef
+  ) {
+    let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    this.transferForm = new FormGroup({
+      email: new FormControl('',[Validators.required, Validators.pattern(emailRegex)])
+    });
+  }
 
   ngOnInit (): void {}
+
+  ngOnChanges (): void {
+    this.receivedData = this.generalInfo;
+    this.cdr.detectChanges();
+    this.transferForm.get('email')?.setValue(this.receivedData.email);
+  }
 
   onTypeEmail (event: any) {
     this.chickedSend = false
@@ -83,8 +99,8 @@ export class TransferformComponent implements OnInit {
   }
 
   sendpay () {
-    this.chickedSend = true
-    if(!this.errorEmail){
+
+    if (this.transferForm.valid) {
       if (this.generalInfo?.idopenpay) {
         this.customerid = this.generalInfo?.idopenpay
         this.getstorepayment()
@@ -103,8 +119,8 @@ export class TransferformComponent implements OnInit {
 
     //validar materia
     if (
-      typeof this.generalInfo.id_moodle_materia == 'undefined' &&
-      this.generalInfo.id_tipo_servicio == 12
+      typeof this.receivedData.id_moodle_materia == 'undefined' &&
+      this.receivedData.id_tipo_servicio == 12
     ) {
       Swal.fire({
         icon: 'error',
@@ -118,72 +134,90 @@ export class TransferformComponent implements OnInit {
 
     //crear voucher
     try {
+      let email = this.transferForm.get('email')?.value;
       const objstore = {
         customerid: this.customerid,
-        email: this.generalInfo.email,
+        email,
         data: {
           method: 'bank_account',
-          amount: this.generalInfo?.total.toFixed(2),
-          description: this.generalInfo.nameProduct
+          amount: this.receivedData?.total.toFixed(2),
+          description: this.receivedData.nameProduct
         }
       }
+
+      let res: any = {};
       this.RestService.generalPost(
         `${apiopenpay}/charge/store`,
         objstore
-      ).subscribe(
-        resp => {
-          if (resp?.payment_method?.name) {
-            //success
-            this.urlpdf = `${dashboardopenpay}/spei-pdf/m8qrwxynurdz6r7m9p4i/${resp?.id}`
+      ).pipe(
+        switchMap(
+          (res1) => {
+            res = res1;
+            //enviar datos DB
+            const objToSave = {
+              id_moodle_alumno: parseInt(this.receivedData?.userId),
+              id_plan_estudio: parseInt(this.receivedData.id_plan_estudio),
+              id_moodle_materia: this.receivedData.id_moodle_materia ?? null,
+              monto: res1?.amount,
+              id_servicio: parseInt(this.generalInfo?.id_servicio),
+              status: res1?.status,
+              order_id: res1?.payment_method?.name,
+              authorization: res1?.authorization,
+              id: res1?.id,
+              cardinfo: null,
+              type_payment: 'spei'
+            }
+
+            return this.RestService.generalPost(`${apigproducts}/pasarela/registrar_pago`, objToSave);
+          }
+        ),
+        catchError(
+          (err) => {
+            throw err;
+          }
+        )
+      ).subscribe({
+        next: (res2) => {
+          //success
+          if (res2.success && res2.data[0].success == 1) {
+            this.urlpdf = `${dashboardopenpay}/spei-pdf/m8qrwxynurdz6r7m9p4i/${res?.id}`
             const htmlContent = `<a class="btn btn-primary" href="${this.urlpdf}" target="_blank">Descargar pdf</a>`
             Swal.fire({
               icon: 'success',
               title: 'Se ha generado con exito tu voucher',
               html: htmlContent,
               showCancelButton: true,
-              showConfirmButton: false
+              showConfirmButton: false,
+              allowOutsideClick: false,
+              allowEscapeKey: false
             })
-
-            //enviar datos DB
-            const objToSave = {
-              id_moodle_alumno: parseInt(this.generalInfo?.userId),
-              id_plan_estudio: parseInt(this.generalInfo.id_plan_estudio),
-              id_moodle_materia: this.generalInfo.id_moodle_materia ?? null,
-              monto: resp?.amount,
-              id_servicio: parseInt(this.generalInfo?.id_servicio),
-              status: resp?.status,
-              order_id: resp?.payment_method?.name,
-              authorization: resp?.authorization,
-              id: resp?.id,
-              cardinfo: null,
-              type_payment: 'spei'
-            }
-            this.RestService.generalPost(
-              `${apigproducts}/pasarela/registrar_pago`,
-              objToSave
-            ).subscribe(responseRegister => {
-              console.log('save_product_bought', responseRegister)
-            })
+          }else{
+            this.getErrorGeneral();
           }
         },
-        err => {
-          this.getErrorGeneral()
+        error:(error)=>{          
+          this.getErrorGeneral();
         },
-        () => console.log('HTTP request completed.')
-      )
+        complete: ()=>{
+          console.log('HTTP request completed.')
+        }
+      })
+
+     
     } catch (error) {
       this.getErrorGeneral()
     }
   }
 
   updateEmail (openid: any) {
-    if (this.generalInfo.email) {
-      this.generalInfo.openid = openid ? openid : this.generalInfo.idopenpay
+      let email = this.transferForm.get('email')?.value;
+    
+      this.receivedData.openid = openid ? openid : this.generalInfo.idopenpay
       const objToUpdate = {
-        id_moodle_alumno: parseInt(this.generalInfo?.userId),
-        id_plan_estudio: parseInt(this.generalInfo.id_plan_estudio),
-        email: this.generalInfo.email,
-        id_open_pay: openid ? openid : this.generalInfo.idopenpay
+        id_moodle_alumno: parseInt(this.receivedData?.userId),
+        id_plan_estudio: parseInt(this.receivedData.id_plan_estudio),
+        email,
+        id_open_pay: openid ? openid : this.receivedData.idopenpay
       }
 
       this.RestService.generalPatch(
@@ -192,7 +226,7 @@ export class TransferformComponent implements OnInit {
       ).subscribe(responseRegister => {
         console.log('update_info_email', responseRegister)
       })
-    }
+    
   }
   
 }
