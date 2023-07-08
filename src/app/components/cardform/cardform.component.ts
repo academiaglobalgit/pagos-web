@@ -4,7 +4,7 @@ import Swal from 'sweetalert2'
 import { RestService } from 'src/app/services/rest.service'
 import { apiopenpay, apigproducts } from 'src/app/services/config'
 import { FormControl, FormGroup, Validators } from '@angular/forms'
-import { map, concatMap, switchMap, catchError } from 'rxjs/operators';
+import { switchMap, catchError } from 'rxjs/operators';
 
 declare var OpenPay: any
 
@@ -177,9 +177,6 @@ export class CardComponent implements OnInit {
               this.cardForm.reset();
             }
           })
-
-        // console.log('data', data);
-        
 
       } catch (error) {
         this.getErrorGeneral()

@@ -1,14 +1,31 @@
 <div>
   <div style="margin-bottom: 20px;">
 
+    <form  [formGroup]="cashForm" (ngSubmit)="sendpay()">
 
-    <div class="form-group">
-      <label for="yearexpired">Email escolar</label>
-      <input type="email" class="form-control" id="emailTyped" placeholder="janeth@email.com"
-        (keyup)="onTypeEmail($event)" value="{{ generalInfo.email }}" id="cardform">
-        <label *ngIf="chickedSend && errorEmail" class="label-error">Email incorrecto</label>
-    </div>
-    <button class="btn btn-primary" (click)="sendpay()">Obtener referencia de pago</button>
+      <div class="form-group">
+        <label for="yearexpired">Email escolar</label>
+        <input 
+          type="email" 
+          class="form-control" 
+          id="emailTyped" 
+          placeholder="janeth@email.com"
+          id="cardform"
+          formControlName="email"
+        >
+          <!-- <label *ngIf="chickedSend && errorEmail" class="label-error">Email incorrecto</label> -->
+          <div *ngIf="cashForm.get('email')!.errors && cashForm.get('email')!.dirty">
+            <label *ngIf="cashForm.get('email')!.hasError('required')" class="label-error">Correo electronico requerido. </label> 
+            <label *ngIf="cashForm.get('email')!.hasError('pattern')" class="label-error">Email incorrecto. </label> 
+          </div>
+      </div>
+      <!-- <button class="btn btn-primary" (click)="sendpay()">Obtener referencia de pago</button> -->
+      <button 
+        class="btn btn-primary" 
+        type="submit"
+      >Obtener referencia de pago</button>
+
+    </form>
 
 
 
