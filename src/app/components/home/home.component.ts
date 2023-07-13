@@ -29,6 +29,7 @@ export class HomeComponent implements OnInit {
   id_servicio: number = 0
   dataInfo = {}
   ItemsResponse: any
+  phoneNumber: string = '1111111111'
   //dataProduct: any;
 
   ngOnInit (): void {
@@ -58,6 +59,7 @@ export class HomeComponent implements OnInit {
                 const priceProduct = element.monto ? element.monto : 1.0
 
                 const chargeService = (priceProduct * 2.9) / 100 + 2.5
+                //const chargeService = 0;
                 this.chargeService = chargeService
                 this.priceProduct = priceProduct
                 const total = chargeService + priceProduct
@@ -98,6 +100,7 @@ export class HomeComponent implements OnInit {
               username: data.nombre,
               lastName: data.apellido_paterno,
               email: data.email,
+              phoneNumber: this.phoneNumber,
               idopenpay: data.id_open_pay,
               id_plan_estudio: this.id_plan_estudio,
               id_moodle_materia: this.id_moodle_materia

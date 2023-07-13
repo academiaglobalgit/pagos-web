@@ -109,7 +109,7 @@ export class CardComponent implements OnInit {
         customer: {
           name: this.generalInfo.username,
           last_name: this.generalInfo.lastName,
-          phone_number: '1111111111',
+          phone_number: this.generalInfo.phoneNumber,
           email: this.generalInfo.email
         }
       }
