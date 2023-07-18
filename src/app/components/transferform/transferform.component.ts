@@ -47,16 +47,6 @@ export class TransferformComponent implements OnInit {
     this.transferForm.get('email')?.setValue(this.receivedData.email);
   }
 
-  onTypeEmail (event: any) {
-    this.chickedSend = false
-    const mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    if(event.target.value.match(mailformat))
-    {
-      this.generalInfo.email = event.target.value
-      this.errorEmail = false
-    } else this.errorEmail = true
-  }
-
   getErrorGeneral () {
     setTimeout(() => {
       Swal.fire({

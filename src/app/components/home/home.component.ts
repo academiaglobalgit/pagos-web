@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core'
 import { Router, ActivatedRoute, Params } from '@angular/router'
 import { RestService } from 'src/app/services/rest.service'
 import { apigproducts } from 'src/app/services/config'
+import Swal from 'sweetalert2'
 
 @Component({
   selector: 'app-home',
@@ -38,8 +39,19 @@ export class HomeComponent implements OnInit {
       this.id_plan_estudio = params?.idplanestudio
       this.id_moodle_materia = params.idmoodlemateria;
 
+      Swal.fire({
+        showCancelButton: false,
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: ()=>{
+          Swal.showLoading();
+        }
+      })
+
       this.getProductInfo(params?.idproduct);
       this.getUserInfo(params?.userid);
+      // Swal.close();
     })
   }
 
@@ -84,6 +96,7 @@ export class HomeComponent implements OnInit {
 
   public getUserInfo (userid: number) {
     if (userid) {
+      // Swal.showLoading();
       this.RestService.generalGet(
         apigproducts +
           `/pasarela/get_informacion_usuario?pe=${this.id_plan_estudio}&ma=${this.userId}`
@@ -105,6 +118,8 @@ export class HomeComponent implements OnInit {
               id_moodle_materia: this.id_moodle_materia
             }
           }
+          Swal.close();
+          
 
           console.log('datainfoHome', this.dataInfo);
         }
