@@ -69,8 +69,7 @@ export class HomeComponent implements OnInit {
                 this.nameProduct = element.nombre
                 const priceProduct = element.monto ? element.monto : 1.0
 
-                //const chargeService = (priceProduct * 2.9) / 100 + 2.5
-                const chargeService = 0;
+                const chargeService = (priceProduct * 2.9) / 100 + 2.5
                 this.chargeService = chargeService
                 this.priceProduct = priceProduct
                 const total = chargeService + priceProduct
